@@ -7,6 +7,10 @@ const express = require('express')
 const morgan = require('morgan')
 const multer = require('multer')
 
+if (!process.env.API_KEY) {
+  throw new Error('environment variable API_KEY is required')
+}
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 /* kb */ * 1024 /* mb */ },
@@ -29,6 +33,14 @@ const app = express()
 
 app.use(morgan('dev'))
 app.use(cors())
+
+app.use((req, res, next) => {
+  if (req.headers['x-api-key'] !== process.env.API_KEY) {
+    res.status(401).end()
+  } else {
+    next()
+  }
+})
 
 app.post('/', upload.single('image'), (req, res) => {
   const directoryPath = fs.mkdtempSync(path.join(os.tmpdir(), 'images'))
