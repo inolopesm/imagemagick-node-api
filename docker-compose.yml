@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    command: node --watch ./main.js
+    environment:
+      - API_KEY=b0c40106-93b4-4912-853d-5ea711cc1669
+    ports:
+      - 4000:80
+    volumes:
+      - ./main.js:/app/main.js
